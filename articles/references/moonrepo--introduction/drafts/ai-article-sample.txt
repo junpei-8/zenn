@@ -1,0 +1,57 @@
+以下の要件に従って、moonrepo（https://moonrepo.dev/docs/install）技術ブログ記事を作成してください：
+
+
+## 記事の基本設定
+- 対象読者：特にmoonrepoに興味がある方
+- 目標：moonrepoの魅力を伝え「これは良さそうかも」や「使ってみたいな」と思わせるような記事にしたい。
+- 形式：技術解説記事
+- トーン：プロフェッショナルかつ親しみやすい
+
+
+## 記事構成
+目的を達成できるような技術記事の記事構成を ChatGPT のほうで考えて欲しい。
+
+
+## 重要な要素
+- 実践的なコードサンプルを含める
+- 図や表を使用して視覚的な理解を促進
+- 見出しを適切に設定し、スキャナビリティを確保
+- 初心者でも理解できる平易な言葉で説明
+- 実務での使用経験に基づいた具体的なアドバイスを含める
+
+
+## 参考にすべき記事スタイル
+以下の記事が非常に参考になるので、これらの考えでの共通点や重要な箇所をまとめ、学習してください。
+
+- https://levtech.jp/media/article/column/detail_449
+- https://qiita.com/MinoDriven/items/6718b5e70e3fb321ff9b 
+- https://azukiazusa.hatenablog.com/entry/2023/01/02/162336
+
+また、上記以外にも参考になる記事があれば、それも検索・調査して参考にしてください。
+
+
+## moonrepoについて
+
+moonrepo は、モノレポのビルドツールです。
+以下のドキュメントなどの資料を参考にしつつ、学習してください。
+
+### 重要度が高いもの
+- https://moonrepo.dev/docs/install
+- https://moonrepo.dev/docs/comparison
+- https://moonrepo.dev/docs/concepts/task
+- https://moonrepo.dev/docs/concepts/cache
+
+### そのほか使い方などのドキュメント
+- https://moonrepo.dev/docs/commands
+- https://moonrepo.dev/docs/concepts/file-group
+- https://moonrepo.dev/docs/concepts/target
+- https://moonrepo.dev/docs/concepts/task-inheritance
+- https://moonrepo.dev/docs/concepts/token
+- https://moonrepo.dev/docs/concepts/toolchain
+- https://moonrepo.dev/docs/config/workspace
+- https://moonrepo.dev/docs/config/toolchain
+- https://moonrepo.dev/docs/config/tasks
+- https://moonrepo.dev/docs/config/project
+- https://moonrepo.dev/docs/cheat-sheet
+
+また、上記以外にもドキュメントや記事などがあるので、他資料に関しても検索・調査して学習してください。

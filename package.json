@@ -1,13 +1,17 @@
 {
   "name": "zenn",
   "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "dev": "zenn preview"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "zenn-cli": "^0.1.158"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.5.2"
   }
 }
