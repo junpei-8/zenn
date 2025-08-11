@@ -8,10 +8,10 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "zenn-cli": "^0.1.158"
+    "zenn-cli": "^0.2.1"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "prettier": "^3.5.2"
+    "prettier": "^3.6.2"
   }
 }

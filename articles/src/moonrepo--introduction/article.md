@@ -43,7 +43,7 @@ moonrepo は以下のような方に特におすすめです！🚀
 
 ```sh:
 .
-├── .moon/
+├── .moon
 │   ├── workspace.yml # プロジェクトの設定
 │   ├── tasks.yml     # タスクの共通設定
 │   └── toolchain.yml # ツールチェーンの設定
@@ -63,7 +63,7 @@ moonrepo は以下のような方に特におすすめです！🚀
 │       └── moon.yml
 │
 ├── packages
-│   ├── ml # Python のプロジェクトの場合
+│   ├── mcp # Python のプロジェクトの場合
 │   │   ├── …
 │   │   ├── pyproject.toml
 │   │   └── moon.yml
@@ -78,13 +78,15 @@ moonrepo は以下のような方に特におすすめです！🚀
 │           ├── go.mod
 │           └── moon.yml
 │
-├── (各言語のパッケージ管理ファイル ※任意)
+├── (各言語のワークスペース管理ファイル ※任意)
 └── moon.yml
 ```
 
 このように、各プロジェクトのディレクトリに `moon.yml` を配置する形になります。
 
 今回の例はスタンダードなモノレポ構造を模倣してみましたが、moonrepo に明確なルールはなく `packages/tools` のように、ディレクトリ構造を１段階深くしてみたりなど、独自のディレクトリ構成も可能です。
+
+また、後ほど詳しく解説しますが moonrepo は言語やフレームワークに依存しない設計となっており、様々な種類のプロジェクトを統一的に管理できる優れた柔軟性を備えています。
 ‎
 
 ### サンプルコード
@@ -97,17 +99,17 @@ moonrepo は以下のような方に特におすすめです！🚀
 
 **`.moon/workspace.yml` ... プロジェクトの構成・設定を定義するファイル**
 
-```yml:.moon/workspace.yml
+```yml
 # プロジェクトの構成
 projects:
   sources:
-    root: '.' # ルートディレクトリは root という名前で参照できるように登録
+    root: "." # ルートディレクトリは root という名前で参照できるように登録
   globs:
-    - '*/**/moon.yml' # moon.yml があるディレクトリをプロジェクトとして認識
+    - "*/**/moon.yml" # moon.yml があるディレクトリをプロジェクトとして認識
 
 # Git などの VCS の設定
 vcs:
-  defaultBranch: 'main'
+  defaultBranch: "main"
 ```
 
 > ドキュメント： https://moonrepo.dev/docs/config/workspace
@@ -115,10 +117,10 @@ vcs:
 \
 **`.moon/tasks.yml` ... 共通タスクや全体的な設定を定義するファイル**
 
-```yml:.moon/tasks.yml
+```yml
 # タスクのデフォルト設定
 taskOptions:
-  outputStyle: 'stream'
+  outputStyle: "stream"
   runInCI: false
 
 # 共通のタスク定義
@@ -134,27 +136,27 @@ tasks:
 \
 **`.moon/toolchain.yml` ... 使用するツールの設定を定義するファイル**
 
-```yml:.moon/toolchain.yml
+```yml
 node:
-  version: '16.13'
-  rootPackageOnly: true # 依存関係はルートでしか管理しない
-  packageManager: 'bun'
-  bun:
-    version: '1.0.0'
+version: "16.13"
+rootPackageOnly: true # 依存関係はルートでしか管理しない
+packageManager: "bun"
+bun:
+  version: "1.0.0"
 
 rust:
-  version: '1.69.0'
-  syncToolchainConfig: true # rust-toolchain.toml を自動で更新
+version: "1.69.0"
+syncToolchainConfig: true # rust-toolchain.toml を自動で更新
 
 python:
-  version: '3.11'
-  rootVenvOnly: true # 依存関係はルートでしか管理しない
-  packageManager: 'uv'
-  uv:
-    version: '0.5.26'
+version: "3.11"
+rootVenvOnly: true # 依存関係はルートでしか管理しない
+packageManager: "uv"
+uv:
+  version: "0.5.26"
 
 typescript:
-  syncProjectReferences: true # tsconfig.json の references を自動で更新
+syncProjectReferences: true # tsconfig.json の references を自動で更新
 ```
 
 > ドキュメント： https://moonrepo.dev/docs/config/toolchain
@@ -172,7 +174,7 @@ id: 'apps/client'
 
 # 依存しているプロジェクトを定義
 dependsOn:
-  - { id: 'packages/ml' } # packages/ml を依存プロジェクトとして登録
+  - { id: 'packages/mcp' } # packages/mcp を依存プロジェクトとして登録
   - { id: 'packages/tools/logger', scope: 'peer' } # ペア依存関係として登録
   - { id: 'packages/tools/monitoring', scope: 'development' } # 開発用の依存関係として登録
 
@@ -208,6 +210,8 @@ moon run check
 
 :::
 
+<br />
+
 ## なぜおすすめなのか
 
 では、前のセクションで moonrepo の雰囲気がなんとなくつかめたと思いますので、いよいよおすすめポイントについて詳しく見ていきましょう。
@@ -228,7 +232,7 @@ moonrepo のモノレポ管理は `package.json` など言語固有のエコシ�
 
 > https://moonrepo.dev/docs#supported-languages
 
-2025年3月時点では、JS/TS、Rust、Python、Go、Ruby、PHP、Bash が Tier 1 までのサポートが提供されており、非常に多くの言語で専用の機能を使用することができます。
+2025年3月時点では、JS/TS、Rust、Python、Go、Ruby、PHP、Bash が Tier 1 以上のサポートが提供されており、非常に多くの言語で専用の機能を使用することができます。
 ‎
 
 ### 2. タスクと依存関係を１つのファイルで定義したい
@@ -244,7 +248,7 @@ tasks:
 
   preview:
     command: 'echo "Hello preview"'
-    deps: ["build"]
+    deps: ['build']
 ```
 
 `command` には実行する任意のコマンドを、`deps` には依存するタスク名を記述しています。\
@@ -264,7 +268,7 @@ Hello build   # deps に指定された build タスクが先に実行される
 Hello preview # その後 preview タスクが実行される
 ```
 
-`preview` よ呼び出しただけですが、しっかりと `build` コマンドの後に `preview` コマンドが実行されていることがわかると思います。
+`preview` を呼び出しただけですが、依存関係の定義に従って `build` コマンドが先に実行され、その後に `preview` コマンドが実行されていることがわかると思います。
 
 \
 少し Turborepo と比較してみましょう。
@@ -303,7 +307,7 @@ Hello preview # その後 preview タスクが実行される
 もちろん、感じ方や考え方は色々ありますので一概にどちらの書き方が優れているとは言えませんが、関連する設定が１つのファイルにまとまっているほうが直感的で管理しやすいと感じる方には、moonrepo はかなり魅力的に映ると思います！
 ‎
 
-### 3. タスク・依存関係の定義を変数的に使い回してラクしたい人
+### 3. タスク・依存関係の定義を変数的に使い回してラクしたい
 
 moonrepo では、タスクの 入力（inputs）や出力（outputs）の対象を適切に指定することで、変更されたファイルのみを検知し増分キャッシュが適用され、ビルドやタスクの実行が最適化されます。しかし、同じファイルパターンを何度も記述するのは手間がかかりますよね。そこで便利なのが fileGroups 機能です。
 
@@ -327,7 +331,7 @@ tasks:
 
 このように fileGroups を使用することで、共通のファイルパターンを一元管理できます。さらに、この fileGroups は `.moon/tasks.yml` に定義することで、各プロジェクトの `moon.yml` でも `@group(sources)` のように参照でき、プロジェクト間で共有することができます。
 
-:::details: もっとプログラムチックに書きたい！
+:::details もっとプログラムチックに書きたい！
 
 最近、moonrepo は [Pkl configuration](https://moonrepo.dev/docs/guides/pkl-config) をサポートするようになりました。
 
@@ -338,11 +342,73 @@ tasks:
 https://moonrepo.dev/docs/guides/pkl-config
 
 :::
+‎
 
-### 5. 多機能だけど必要最低限の機能だけ選択して使いたい人
+### 4. 豊富なオプションと高度な自動化を備えつつオプトインで利用したい
 
-えー、この moonrepo さん、ものレポ管理以外にもたくさんの機能を持っています。
-一度、大きなカテゴリーでまとめてみましょう。
+moonrepo は非常に多くのオプションと高度な自動化機能を提供しています。
+
+例えば、依存関係の
+
+これらの機能は、プロジェクトの成長に合わせて段階的に導入できるのが特徴です。例えば、最初は基本的なタスク定義だけを行い、プロジェクトの規模が大きくなってきたらキャッシュ機能を追加し、さらにチーム規模が拡大してきたら依存関係の最適化を導入する、といった具合です。
+
+自動化の面でも優れた機能を備えています。TypeScript のプロジェクト参照設定を自動で管理したり、package.json の依存関係を自動で同期したりと、開発者が手作業で行うと煩雑になりがちな作業を効率化してくれます。
+
+moonrepo では、それらは基本的にオプトイン（必要に応じて選択的に有効化）で利用することができます。そのため、既存のツールとの役割の重複を避けたり、チームの開発スタイルを尊重しながら、必要な箇所から少しずつ改善を進めていけます。また、既存の開発環境を大きく変更することなく部分的に導入できるため、段階的な移行も容易です。
+
+#### 注目の機能
+
+moonrepo には多くの機能がありますが、特に以下の機能は使い勝手が良く、おすすめです。
+
+:::details オプション
+
+- envFile
+
+- os
+
+```yml:moon.yml
+tasks:
+  build:
+    deps: ['build-unix', 'build-windows']
+
+  build-unix:
+    # ...
+    options:
+      os: ['linux', 'macos']
+
+  build-windows:
+    # ...
+    options:
+      os: 'windows'
+```
+
+- runDepsInParallel
+
+:::
+
+:::details 自動化機能
+
+- **TypeScript Project References の自動設定**: 複数の TS プロジェクト間の依存関係を自動で設定
+- **package.json の依存関係の同期**: moon.yml の設定を package.json に自動反映
+- **依存パッケージの自動インストール**: タスク実行時に必要なパッケージを自動でインストール
+- **コードオーナーの自動同期**: CODEOWNERS ファイルを自動生成・更新
+
+:::
+
+タスクに関するオプションは特に豊富で、2025年3月現在、実行環境の指定から依存関係の管理、キャッシュの制御まで、多岐にわたる設定が可能です。詳細は公式ドキュメントで確認できます：
+
+https://moonrepo.dev/docs/config/project#options
+
+<br />
+
+## moonrepo のその他の魅力
+
+moonrepo には、モノレポ管理以外にも多くの魅力的な機能があります。ここでは、moonrepo をさらに活用したい方に向けて、大きく2つの観点からその魅力を紹介します。
+
+### 統合ツールとしての魅力
+
+実は moonrepo はモノレポ管理という役割以外にも多くの機能を内包しています...！\
+moonrepo は、これらの機能をすでに搭載しているため、個別のツールを導入する必要がなく、moonrepo １つでカバーできるのが特徴です。
 
 | 機能                 | 説明                                                             | 類似ツール                   |
 | -------------------- | ---------------------------------------------------------------- | ---------------------------- |
@@ -351,140 +417,148 @@ https://moonrepo.dev/docs/guides/pkl-config
 | Git(VCS) Hooks       | コミットやプッシュなどのアクションを検知し、自動でタスク実行する | lefthook, husky, lint-staged |
 | テンプレート生成機能 | テンプレートを生成する機能を提供                                 | Twig, Blade                  |
 
-※1 ... proto をインストールする必要あり
+※1 ... moonrepo が開発している `proto` をインストールする必要あり
 
-ここまでの紹介だけでも、かなり様々な機能をカバーしていることがわかると思います。（紹介しきれていない機能もたくさんあります）
+このように、通常は別々のツールとして導入・管理する必要のある機能を、moonrepo 一つで統合的に扱える点が大きな魅力です。
 
-ですが、多機能なツールはその分依存することが多く、不要なものを使うのを渋ってしまう気持ちもわかります。
+### 詰め込み過ぎはちょっと。。。🤔
 
-ですが、moonrepo は 基本的にオプトイン のスタイルで、使いたい機能だけ ピンポイントで有効化できるのが特徴です。
-何も設定がないと、タスクランナーと依存関係のみを管理するシンプルなツールになります。
+ですが、多機能なツールはその分依存することが多く、不要なものを使うのを渋ってしまう方も多いのではないでしょうか。
 
-そう、moonrepo を使うと。
-しかも、moonrepo のモノレポ管理以外の機能は基本的にオプトインとなっているため、たとえば、まだ信頼度が高い husky を使いたい、といった場合も特に設定せず husky を導入することができます。
+しかし、moonrepo は基本的にオプトインのスタイルで、使いたい機能だけをピンポイントで有効化できるのが特徴です。何も設定がない場合は、タスクランナーと依存関係のみを管理するシンプルなツールとして機能します。
 
-## moonrepo のその他の魅力
+この柔軟性により、例えば husky などの信頼性の高い既存ツールを併用したい場合でも、moonrepo の設定を変更することなく、そのまま利用することができます。
 
-上で挙げた以外にも、moonrepo には「便利だな」と思うポイントがいろいろあります。ここでは大きく 「自動化」と「CI の簡略化」 に分けてご紹介します。
-
-### 豊富なオプションと高度な自動化を備えつつオプトインで利用したい
-
-moonrepo は非常に多くのオプションと高度な自動化を提供していますが、それらは基本オプトインで利用できる設計になっています。
-
-#### オプトイン設計のメリット
-
-moonrepo のオプトイン設計には以下のようなメリットがあります：
-
-- **段階的な導入が可能**：最初はシンプルな設定から始めて、必要に応じて機能を追加できる
-- **学習コストの低減**：必要な機能だけを学べば良いため、初期の学習負荷が少ない
-- **既存ツールとの共存**：既存のツールチェーンを壊すことなく、部分的に導入できる
-- **チーム間の合意形成が容易**：機能を一つずつ導入することで、チーム内での合意を取りやすい
-
-#### 主要なオプションの具体例
-
-moonrepo は大きく分けて、以下の設定が可能です：
-
-- **workspace**: モノレポの設定をまとめておくファイル
-- **toolchain**: ツールチェーンの設定をまとめておくファイル
-- **task**: タスクの設定をまとめておくファイル
-
-特にタスクのオプションが豊富で、2025/03/19 現在だけでも以下のような多様な設定が可能です：
-
-```yaml
-tasks:
-  build:
-    command: "vite build"
-    # 以下のオプションは全てオプトイン
-    options:
-      cache: true # キャッシュを有効化
-      persistent: false # タスクを継続的に実行しない
-      runDepsInParallel: true # 依存タスクを並列実行
-      runInCI: true # CI環境でも実行
-      retryCount: 3 # 失敗時に再試行する回数
-      env: # 環境変数の設定
-        NODE_ENV: "production"
-```
-
-これらのオプションは、必要に応じて段階的に導入できます。例えば、最初はシンプルなタスク定義から始めて、徐々にキャッシュや依存関係の最適化を追加していくといった使い方が可能です。
-
-#### 自動化機能の具体例
-
-moonrepo は高度な自動化機能も備えています。例えば：
-
-- **TypeScript Project References の自動設定例**：
-
-  ```yaml
-  # .moon/toolchain.yml
-  typescript:
-    syncProjectReferences: true # この設定だけで自動化される
-  ```
-
-- **package.json の依存関係の同期例**：
-
-  ```yaml
-  # moon.yml
-  dependsOn:
-    - { id: "packages/shared", scope: "production" }
-  # 上記の設定が自動的に package.json に反映される
-  ```
-
-- **依存パッケージの自動インストール**：タスク実行時に必要なパッケージを自動でインストール
-- **コードオーナーの自動同期**：CODEOWNERS ファイルを自動生成・更新
-
-#### 段階的な導入シナリオ
-
-moonrepo は段階的に導入できるのが特徴です。以下は導入シナリオの例です：
-
-**ステップ1: 基本的なタスクランナーとして**
-
-```yaml
-tasks:
-  build: "vite build"
-  test: "jest"
-```
-
-**ステップ2: 依存関係の管理を追加**
-
-```yaml
-dependsOn:
-  - { id: "packages/shared" }
-tasks:
-  build:
-    command: "vite build"
-    deps: ["^build"] # 依存プロジェクトのbuildタスクを先に実行
-```
-
-**ステップ3: キャッシュと最適化を追加**
-
-```yaml
-tasks:
-  build:
-    command: "vite build"
-    options:
-      cache: true
-    inputs:
-      - "src/**/*"
-    outputs:
-      - "dist"
-```
-
-このように、豊富なオプションと高度な自動化機能を必要に応じて選択的に活用できる点が、moonrepo の大きな魅力の一つとなっています。
+このように、既存のツールチェーンを尊重しながら、必要な機能だけを段階的に導入できる点が、moonrepo の大きな魅力の一つとなっています。
 
 ### CI がむちゃくちゃ簡略化できる
 
 moonrepo は タスク依存関係の管理 や 差分ビルド の仕組みがしっかりしているので、CI/CD パイプラインの設定がスッキリ します。
-具体的には、「このタスクが終わってからあのタスクを実行する」 といったフローが簡単に書けますし、差分検出（変更のあったプロジェクトだけビルド or テスト）を自動でやってくれるため、ビルド時間の短縮や無駄なリソース消費の削減に効果的です。
-私の場合、GitHub Actions 上でも「moon コマンド一発」でビルド〜テスト〜デプロイまでを並列・直列にサクッと書けるので、YAML がかなりコンパクトになりました。
 
-## 現状の課題と解決策
+#### 差分検知による効率化
 
-- **クラウドキャッシュが未実装**
-  現時点ではローカルキャッシュのみのため、大規模プロジェクトの効率化には工夫が必要です。
-  今後のバージョンアップで対応が予定されているようなので、Changelog をチェックしましょう。
+moonrepo の最大の強みの一つは、変更があったプロジェクトのみを自動で検出し、必要なタスクだけを実行してくれる点です。
 
-- **ドキュメントが少ない**
-  まだ新しいツールなので情報が少ないのが実情です。
-  公式ドキュメントや GitHub の Issue、コミュニティなどを積極的に活用すると良いでしょう。
+```sh
+# 変更があったプロジェクトのみテストを実行
+moon ci --affected
+
+# main ブランチとの差分を検出してビルド
+moon run :build --affected --remote
+```
+
+これにより、100個のプロジェクトがあるモノレポでも、実際に変更があった3つのプロジェクトだけがビルド・テストされるため、CI の実行時間を大幅に短縮できます。
+
+#### GitHub Actions との連携例
+
+実際の GitHub Actions の設定例を見てみましょう：
+
+```yaml:.github/workflows/ci.yml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 差分検出のために履歴が必要
+
+      - name: Setup moon
+        uses: moonrepo/setup-moon-action@v1
+
+      - name: Run affected checks
+        run: |
+          # 差分のあるプロジェクトのみ lint/test/build を実行
+          moon ci --affected
+```
+
+従来の方法では、各プロジェクトごとに個別のジョブを定義したり、複雑な条件分岐を書く必要がありましたが、moonrepo を使えばこれだけで済みます。
+
+#### 並列実行の最適化
+
+moonrepo は依存関係グラフを解析し、並列実行可能なタスクを自動で判定します：
+
+```yml:moon.yml
+tasks:
+  lint:
+    command: 'eslint .'
+
+  test:
+    command: 'vitest'
+
+  build:
+    command: 'vite build'
+    deps: ['lint', 'test'] # lint と test は並列実行される
+```
+
+この例では、`lint` と `test` は依存関係がないため並列で実行され、両方が完了してから `build` が実行されます。CI の実行時間を最小限に抑えることができます。
+
+<br />
+
+## moonrepo の最新機能
+
+### リモートキャッシュと moonbase
+
+2024年現在、moonrepo はリモートキャッシュ機能を実装し、チーム開発での効率性が大幅に向上しました。
+
+#### リモートキャッシュの仕組み
+
+リモートキャッシュは、ビルド成果物やテスト結果をチームメンバー間で共有する機能です：
+
+```yml:.moon/workspace.yml
+runner:
+  cacheLifetime: '7 days'
+  archivableTargets: ['dist', 'build']
+
+# moonbase を使用する場合
+remoteCache:
+  provider: 'moonbase'
+```
+
+これにより、チームメンバーの誰かが一度実行したタスクの結果は、他のメンバーがキャッシュから取得できるため、重複作業を避けられます。
+
+#### moonbase によるクラウドサービス
+
+moonrepo 社が提供する moonbase は、以下の機能を提供する有料サービスです：
+
+- **クラウドキャッシュ**: ビルド成果物をクラウドで管理
+- **CI インサイト**: ビルド時間やキャッシュヒット率の可視化
+- **ヘルススコア**: プロジェクトの健全性を数値化
+- **コードオーナーシップ管理**: CODEOWNERS の自動生成と管理
+
+特に CI インサイトは、どのタスクがボトルネックになっているかを視覚的に把握でき、継続的な改善に役立ちます。
+
+<br />
+
+## 現状の課題と対策
+
+### 日本語情報の少なさ
+
+moonrepo はまだ日本での認知度が低く、日本語の情報が限られています。以下の対策がおすすめです：
+
+- **公式ドキュメントの活用**: 英語ですが非常に充実しています
+- **Discord コミュニティ**: 開発者が直接質問に答えてくれることも
+- **GitHub Discussions**: 使用例や Tips が共有されています
+
+### 学習曲線
+
+moonrepo は多機能なため、最初は戸惑うかもしれません。段階的な導入がおすすめです：
+
+1. まずはタスクランナーとして基本的な使い方を習得
+2. 依存関係グラフを活用した並列実行を導入
+3. CI/CD との統合でキャッシュ機能を活用
+4. moonbase でチーム全体の生産性を向上
+
+### エコシステムの成熟度
+
+Turborepo や Nx と比べると、サードパーティ製のプラグインやテンプレートはまだ少ないです。しかし、moonrepo の柔軟な設計により、既存のツールとの組み合わせで十分にカバーできます。
+
+<br />
 
 ## まとめ
 

@@ -35,14 +35,14 @@ moonrepo は以下のような方に特におすすめです！🚀
 
 ## moonrepo の全体像
 
-では、さっそく[なぜおすすめなのか](#なぜおすすめなのか)について詳しく解説したいところですが、まずは全体像をイメージしていただくために、moonrepo を導入した際のプロジェクト構造とサンプルコードをご紹介したいと思います。
+では、さっそく[こんな人におすすめ](#こんな人におすすめ)について詳しく解説したいところですが、まずは全体像をイメージしていただくために、moonrepo を導入した際のプロジェクト構造とサンプルコードをご紹介したいと思います。
 
 ### プロジェクト構造の例
 
 以下が moonrepo を導入した際の簡単なプロジェクト構造の例です。
 
 ```sh:
-/
+.
 ├── .moon
 │   ├── workspace.yml # プロジェクトの設定
 │   ├── tasks.yml     # タスクの共通設定
@@ -99,17 +99,17 @@ moonrepo は以下のような方に特におすすめです！🚀
 
 **`.moon/workspace.yml` ... プロジェクトの構成・設定を定義するファイル**
 
-```yml:.moon/workspace.yml
+```yml
 # プロジェクトの構成
 projects:
   sources:
-    root: '.' # ルートディレクトリは root という名前で参照できるように登録
+    root: "." # ルートディレクトリは root という名前で参照できるように登録
   globs:
-    - '*/**/moon.yml' # moon.yml があるディレクトリをプロジェクトとして認識
+    - "*/**/moon.yml" # moon.yml があるディレクトリをプロジェクトとして認識
 
 # Git などの VCS の設定
 vcs:
-  defaultBranch: 'main'
+  defaultBranch: "main"
 ```
 
 > ドキュメント： https://moonrepo.dev/docs/config/workspace
@@ -117,10 +117,10 @@ vcs:
 \
 **`.moon/tasks.yml` ... 共通タスクや全体的な設定を定義するファイル**
 
-```yml:.moon/tasks.yml
+```yml
 # タスクのデフォルト設定
 taskOptions:
-  outputStyle: 'stream'
+  outputStyle: "stream"
   runInCI: false
 
 # 共通のタスク定義
@@ -136,24 +136,24 @@ tasks:
 \
 **`.moon/toolchain.yml` ... 使用するツールの設定を定義するファイル**
 
-```yml:.moon/toolchain.yml
+```yml
 node:
-  version: '16.13'
+  version: "16.13"
   rootPackageOnly: true # 依存関係はルートでしか管理しない
-  packageManager: 'bun'
+  packageManager: "bun"
   bun:
-    version: '1.0.0'
+    version: "1.0.0"
 
 rust:
-  version: '1.69.0'
+  version: "1.69.0"
   syncToolchainConfig: true # rust-toolchain.toml を自動で更新
 
 python:
-  version: '3.11'
+  version: "3.11"
   rootVenvOnly: true # 依存関係はルートでしか管理しない
-  packageManager: 'uv'
+  packageManager: "uv"
   uv:
-    version: '0.5.26'
+    version: "0.5.26"
 
 typescript:
   syncProjectReferences: true # tsconfig.json の references を自動で更新
@@ -212,7 +212,7 @@ moon run check
 
 <br />
 
-## なぜおすすめなのか
+## こんな人におすすめ
 
 では、前のセクションで moonrepo の雰囲気がなんとなくつかめたと思いますので、いよいよおすすめポイントについて詳しく見ていきましょう。
 
@@ -232,7 +232,7 @@ moonrepo のモノレポ管理は `package.json` など言語固有のエコシ�
 
 > https://moonrepo.dev/docs#supported-languages
 
-2025年3月時点では、JS/TS、Rust、Python、Go、Ruby、PHP、Bash が Tier 1 までのサポートが提供されており、非常に多くの言語で専用の機能を使用することができます。
+2025年8月時点では、JS/TS、Rust、Python、Go、Ruby、PHP、Bash が Tier 1 以上のサポートが提供されており、非常に多くの言語で専用の機能を使用することができます。
 ‎
 
 ### 2. タスクと依存関係を１つのファイルで定義したい
@@ -395,7 +395,7 @@ tasks:
 
 :::
 
-タスクに関するオプションは特に豊富で、2025年3月現在、実行環境の指定から依存関係の管理、キャッシュの制御まで、多岐にわたる設定が可能です。詳細は公式ドキュメントで確認できます：
+タスクに関するオプションは特に豊富で、2025年8月現在、実行環境の指定から依存関係の管理、キャッシュの制御まで、多岐にわたる設定が可能です。詳細は公式ドキュメントで確認できます：
 
 https://moonrepo.dev/docs/config/project#options
 
